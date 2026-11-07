@@ -341,8 +341,8 @@ This Firefox version compares as follows:
 
 - **Synthetic input.** Pages can tell that events didn't come from a real user, and strict anti-bot sites may notice.
   On sites that watch keystrokes, use `type` rather than `fill`.
-- **Page-script popups.** Firefox's popup blocker may stop a `window.open` triggered from a click handler. Ordinary
-  `target=_blank` links work: they open as background agent tabs.
+- **Popups.** `target=_blank` links and `window.open` from click handlers both open as background agent tabs (tested).
+  A page that opens popups outside a click, or a stricter popup-blocker setting, can still be blocked.
 - **Background tabs really are in the background.** Pages see `document.hidden === true`, and Firefox throttles their
   timers. browse's own pacing isn't affected, but a page that waits on `requestAnimationFrame` may stall until you look
   at the tab.
@@ -360,6 +360,7 @@ browse-firefox install [--agents opencode,claude,codex,cursor] [--no-agents]
 browse-firefox uninstall                  # removes the host and agent entries; keeps your secrets
 browse-firefox doctor                     # checks every piece of the setup
 browse-firefox status | tabs
+browse-firefox reload                     # reload the extension from disk after updating; restarts the relay
 browse-firefox exec 'await page.goto("https://example.com"); return await page.title()'
 browse-firefox exec --file flow.js --session work
 browse-firefox snapshot https://example.com
@@ -386,10 +387,10 @@ Run `browse-firefox doctor` first; it checks every piece. Relay logs are in `~/.
 | "Ref e12 is stale" | The page changed. Take a new snapshot. |
 | "Firefox doesn't let extensions script this page" | The tab is a privileged page (`about:`, AMO, reader view). Navigate to a normal site first. |
 | A click "would land on another element" | A modal or cookie banner is covering the target. Close it first, or pass `force: true`. |
-| Doctor reports a relay version mismatch | Reload the extension (the **Reload** button in `about:debugging`) or restart Firefox. |
+| Doctor reports a relay version mismatch | Run `browse-firefox reload`, or restart Firefox. |
 
-**Updating:** run `git pull`, reload the extension in `about:debugging` (or install the newly signed `.xpi`), then
-start a new agent session.
+**Updating:** run `git pull`, then `browse-firefox reload`, which makes the extension reload itself from disk (or
+install the newly signed `.xpi`). Then start a new agent session.
 
 ---
 
@@ -397,14 +398,32 @@ start a new agent session.
 
 ```sh
 npm test            # unit tests: snapshot diffing, TOTP (RFC 6238 vectors), allowlist matching, MCP handshake
-npm run e2e         # ~95 tool calls against a throwaway headless Firefox profile and a local fixture site
+npm run e2e         # 40 end-to-end tests: the official MCP SDK client against a throwaway headless Firefox
+npm run e2e:human   # real clicks (macOS + agent-desktop): lend a tab, Continue a hand-off, take tabs back
 npm run lint        # web-ext lint
 npm run dev         # launch Firefox with the extension loaded temporarily (a separate profile)
 ```
 
-- The e2e suite never touches your own Firefox profile. It needs the native host registered first
-  (`node src/cli.mjs install --no-agents`).
-- After you change files in `extension/`, reload the extension in `about:debugging`.
+What the suites cover:
+
+- **`npm run e2e`** (`test/e2e/sdk.test.mjs`) connects with `@modelcontextprotocol/sdk`'s `Client` over stdio, so
+  every response is checked against the MCP schema. It drives every tool against fixture pages, including:
+  - the closed shadow DOM, iframes, an SPA with `pushState`, a modal overlay, late-appearing elements and a
+    3,000-row page
+  - popups, redirects and allowlists, with credentials in headers, cookies and URLs
+  - the `execute` sandbox, two sessions running side by side, and settings
+  - an extension reload, after which tab ownership must survive
+- **`npm run e2e:human`** (`test/e2e/human-flows.mjs`) opens a *visible* test Firefox and clicks through macOS
+  accessibility (`agent-desktop`). It covers:
+  - lending a tab with the toolbar button
+  - Continue on the hand-off card, and Continue via the toolbar
+  - a page trying to fake Continue
+  - a hand-off on a background agent tab, which must expand the group
+  - taking tabs back
+- Both suites run in an isolated profile with their own relay socket, data folder and secrets (via
+  `XDG_DATA_HOME`), so they never touch your Firefox, even while it's connected. They need the native host
+  registered first (`node src/cli.mjs install --no-agents`).
+- After you change files in `extension/`, run `browse-firefox reload`.
 - Changes in `src/` take effect for new MCP sessions. The relay restarts when the extension reloads.
 
 ## Project layout
@@ -435,7 +454,10 @@ src/
   paths.mjs                file locations
 test/
   unit.test.mjs            unit tests
-  e2e/                     fixture site, step files, runner
+  e2e/sdk.test.mjs         end-to-end suite on the official MCP SDK client
+  e2e/human-flows.mjs      real-click flows (toolbar, hand-off card) via agent-desktop
+  e2e/harness.mjs          fixture server, isolated Firefox launcher, SDK client helper
+  e2e/site/                fixture pages
 ```
 
 ## Roadmap

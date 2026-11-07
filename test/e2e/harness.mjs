@@ -9,7 +9,7 @@ import http from "node:http";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { spawn, execFileSync } from "node:child_process";
+import { spawn, execFile, execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
@@ -17,6 +17,17 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const SITE = path.join(ROOT, "test/e2e/site");
 const FIREFOX = process.env.FIREFOX || "/Applications/Firefox.app/Contents/MacOS/firefox";
+
+// Keep a fresh test profile free of first-run prompts (they cover the toolbar and have their own "Continue").
+const FIRST_RUN_PREFS = [
+  "browser.shell.checkDefaultBrowser=false",
+  "browser.preonboarding.enabled=false",
+  "datareporting.policy.dataSubmissionPolicyBypassNotification=true",
+  "termsofuse.bypassNotification=true",
+  "browser.aboutwelcome.enabled=false",
+  "trailhead.firstrun.didSeeAboutWelcome=true",
+  "browser.startup.homepage_override.mstone=ignore",
+];
 
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -87,12 +98,21 @@ function firefoxPids() {
   }
 }
 
-export async function startFirefox(env) {
+export async function startFirefox(env, { headless = true, startUrl = "about:blank" } = {}) {
+  // Launching a fresh profile occasionally stalls; one retry makes the suite reliable.
+  try {
+    return await launchFirefox(env, 60, headless, startUrl);
+  } catch {
+    return launchFirefox(env, 90, headless, startUrl);
+  }
+}
+
+async function launchFirefox(env, waitSeconds, headless, startUrl) {
   const before = new Set(firefoxPids());
-  const proc = spawn("npx", ["--yes", "web-ext@8", "run", "--source-dir", path.join(ROOT, "extension"), `--firefox=${FIREFOX}`, "--no-reload", "--no-input", "--arg=-headless", "--start-url", "about:blank", "--pref=browser.shell.checkDefaultBrowser=false"], {
+  const proc = spawn("npx", ["--yes", "web-ext@8", "run", "--source-dir", path.join(ROOT, "extension"), `--firefox=${FIREFOX}`, "--no-reload", "--no-input", ...(headless ? ["--arg=-headless"] : []), "--start-url", startUrl, ...FIRST_RUN_PREFS.map((p) => `--pref=${p}`)], {
     env,
     detached: true,
-    stdio: "ignore",
+    stdio: ["ignore", fs.openSync(path.join(env.XDG_STATE_HOME, "..", "web-ext.log"), "a"), fs.openSync(path.join(env.XDG_STATE_HOME, "..", "web-ext.log"), "a")],
   });
   const stop = () => {
     try {
@@ -109,12 +129,13 @@ export async function startFirefox(env) {
   };
   process.on("exit", stop);
   const socket = path.join(env.XDG_DATA_HOME, "browse-firefox", "relay.sock");
-  for (let i = 0; i < 90; i++) {
-    if (fs.existsSync(socket) && (await health(socket))) return { stop, socket };
+  for (let i = 0; i < waitSeconds; i++) {
+    if (fs.existsSync(socket) && (await health(socket))) return { stop, socket, pids: () => firefoxPids().filter((p) => !before.has(p)) };
     await sleep(1000);
   }
   stop();
-  throw new Error("Test Firefox didn't connect within 90s (is the native host registered? run `node src/cli.mjs install --no-agents`)");
+  const logFile = path.join(env.XDG_STATE_HOME, "..", "web-ext.log");
+  throw new Error(`Test Firefox didn't connect within ${waitSeconds}s; see ${logFile}. ` + "Is the native host registered? Run `node src/cli.mjs install --no-agents`.");
 }
 
 function health(socket) {
@@ -153,6 +174,16 @@ export async function mcpClient(env, session) {
   return { client, call, close: () => client.close() };
 }
 
+// Async on purpose: the fixture server runs in this process, and a blocking child would stall it.
 export function cli(env, ...args) {
-  return execFileSync(process.execPath, [path.join(ROOT, "src/cli.mjs"), ...args], { env, encoding: "utf8" });
+  return cliInput(env, "", ...args);
+}
+
+export function cliInput(env, input, ...args) {
+  return new Promise((resolve, reject) => {
+    const child = execFile(process.execPath, [path.join(ROOT, "src/cli.mjs"), ...args], { env, encoding: "utf8" }, (err, stdout, stderr) =>
+      err ? reject(Object.assign(err, { stderr })) : resolve(stdout),
+    );
+    child.stdin.end(input);
+  });
 }

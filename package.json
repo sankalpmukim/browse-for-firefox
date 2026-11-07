@@ -17,7 +17,8 @@
     "lint": "npx --yes web-ext@8 lint --source-dir extension",
     "dev": "npx --yes web-ext@8 run --source-dir extension --firefox=/Applications/Firefox.app/Contents/MacOS/firefox",
     "test": "node --test test/unit.test.mjs",
-    "e2e": "sh test/e2e/run.sh"
+    "e2e": "node --test --test-concurrency=1 --test-timeout=240000 test/e2e/sdk.test.mjs",
+    "e2e:human": "node test/e2e/human-flows.mjs"
   },
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2"

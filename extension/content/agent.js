@@ -1207,6 +1207,23 @@
     return { typed: text.length, into: describe(target), synthetic: synthetic || undefined };
   }
 
+  /** Submit the form a field belongs to, the way a person would: its submit button, or Enter in a field. */
+  async function submitForm(el, args) {
+    const field = editableTarget(el) || el;
+    const form = field.form || field.closest?.("form");
+    if (!form) {
+      field.focus?.({ preventScroll: true });
+      return { ...(await press({ ...args, key: "Enter" })), how: "enter (no form)" };
+    }
+    const submitter = [...form.querySelectorAll("button:not([type]),button[type=submit],input[type=submit],input[type=image]")].find((b) => !b.disabled && isVisible(b));
+    if (submitter) {
+      await click(submitter, { ...args, force: !isVisible(submitter) });
+      return { submitted: describe(form), how: `clicked ${describe(submitter)}` };
+    }
+    form.requestSubmit();
+    return { submitted: describe(form), how: "requestSubmit" };
+  }
+
   function selectOption(el, args) {
     const select = el.localName === "select" ? el : el.querySelector?.("select");
     if (!select) fail(`Not a <select>: ${describe(el)}. For a custom dropdown, click it and then click the option.`, "not_select");
@@ -1554,6 +1571,8 @@
           f.focus({ preventScroll: true });
         }
         return press(args);
+      case "submit":
+        return submitForm(resolveOne(args.target).element, args);
       case "selectOption":
         return selectOption(resolveOne(args.target).element, args);
       case "setChecked":

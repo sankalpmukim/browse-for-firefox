@@ -418,7 +418,7 @@ export function runMcp() {
         t = r.t;
         results.push(r.result);
       }
-      if (args.submit) results.push((await act(args, "press", { key: "Enter", target: fields.at(-1).target })).result);
+      if (args.submit) results.push((await act(args, "submit", { target: fields.at(-1).target })).result);
       const synthetic = results.some((r) => r.synthetic);
       const summary = { filled: results.length, results };
       if (synthetic) summary.warning = "Some values were set directly (synthetic events). If the page ignores them, use type for key-by-key input.";
@@ -427,7 +427,7 @@ export function runMcp() {
 
     async type(args) {
       const { t, result } = await act(args, "type", { target: args.target, text: args.text, delay: args.delayMs });
-      if (args.submit) await act(args, "press", { key: "Enter" });
+      if (args.submit) await act(args, "submit", { target: args.target ?? ":focus" });
       return afterAction(t, args.frameId, result);
     },
 
@@ -500,7 +500,8 @@ export function runMcp() {
       const page = new Page(session, t);
       page.frameId = args.frameId ?? 0;
       const src = args.expression.trim();
-      const isFn = /^(async\s+)?(\([^)]*\)|[\w$]+)\s*=>|^(async\s+)?function\b/.test(src);
+      // "(a, b) => …" or "function …", but not an immediately-invoked "(() => …)()".
+      const isFn = /^(async\s+)?(\([^()]*\)|[\w$]+)\s*=>|^(async\s+)?function\b/.test(src) && !/\)\s*\(\s*[^)]*\)\s*;?$/.test(src);
       let value;
       if (args.target) {
         if (!isFn) throw new Error('With target, expression must be a function, e.g. "(el) => el.textContent"');

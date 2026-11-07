@@ -187,7 +187,7 @@ export class Page {
     for (;;) {
       try {
         const result = await this._call("dom", { frameId: frameId ?? this.frameId, op, args });
-        if (["click", "press", "fill", "selectOption", "setChecked", "type", "mouseClick"].includes(op)) await this._settle();
+        if (["click", "press", "fill", "selectOption", "setChecked", "type", "mouseClick", "submit"].includes(op)) await this._settle();
         return result;
       } catch (err) {
         if (RETRYABLE.has(err.code) && Date.now() < deadline) {

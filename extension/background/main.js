@@ -127,9 +127,9 @@ const methods = {
   async "tabs.new"({ session, url, waitUntil, timeoutMs }) {
     checkAllowed(session, url);
     const tab = await tabs.openAgentTab(session, "about:blank");
-    if (!url || url === "about:blank") return tabs.describeTab(tab.id);
-    // Let the initial about:blank settle, or our navigation can abort it (and vice versa).
+    // Let the initial about:blank settle, or a navigation right after can abort it (and vice versa).
     await waitForLoadState(tab.id, { timeoutMs: 3000 }).catch(() => {});
+    if (!url || url === "about:blank") return tabs.describeTab(tab.id);
     const nav = await navigate(tab.id, "goto", { url, waitUntil, timeoutMs });
     return { ...(await tabs.describeTab(tab.id)), navigation: nav.event, loadTimedOut: nav.timedOut || undefined };
   },
@@ -234,6 +234,11 @@ const methods = {
       await sendToContent(tabId, 0, "console.stop", {}, { inject: false }).catch(() => {});
       return { capturing: false };
     }),
+  async "extension.reload"() {
+    // Re-reads the extension from disk (temporary/dev installs) and restarts the relay. Reply first.
+    setTimeout(() => browser.runtime.reload(), 100);
+    return { reloading: true, version: VERSION };
+  },
   async "settings.get"() {
     return describeSettings();
   },

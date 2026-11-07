@@ -27,6 +27,7 @@ const HELP = `browse-firefox ${VERSION} — let AI agents use your real Firefox
   uninstall            Undo install (keeps secrets)
   doctor               Check the setup
   status               Firefox/extension status and agent tabs
+  reload               Reload the extension from disk (after updating) and restart the relay
   mcp                  Run the MCP server on stdio (what agents start)
   exec <code>|--file f Run a Playwright-style script (same as the execute tool) [--session name]
   snapshot [url]       Print a page snapshot (navigates first when a url is given)
@@ -94,6 +95,19 @@ async function main() {
       const h = await health();
       if (!h?.ok) return console.log(JSON.stringify({ connected: false, hint: "Open Firefox with the extension installed; run browse-firefox doctor." }, null, 2));
       return console.log(JSON.stringify({ connected: true, relay: h, ...(await rpc("status", { session: flags.session })) }, null, 2));
+    }
+    case "reload": {
+      // Ask the extension to reload itself from disk (after `git pull` or local edits), then wait for it.
+      const { rpc, health } = await import("./client.mjs");
+      const before = await health();
+      if (!before?.ok) throw new Error("Firefox isn't connected, so there's nothing to reload.");
+      await rpc("extension.reload", {}, { launch: false });
+      for (let i = 0; i < 40; i++) {
+        await new Promise((r) => setTimeout(r, 500));
+        const h = await health();
+        if (h?.ok && h.pid !== before.pid) return console.log(`Reloaded: extension ${h.extension}, relay ${h.version} (pid ${h.pid})`);
+      }
+      throw new Error("The extension didn't come back within 20s. Check about:addons.");
     }
     case "tabs": {
       const { rpc } = await import("./client.mjs");

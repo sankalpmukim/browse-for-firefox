@@ -98,10 +98,10 @@ export function badge(tabId) {
   browser.browserAction.setBadgeBackgroundColor({ tabId, color }).catch(() => {});
   const title = !entry
     ? "browse · Click to let agents use this tab"
-    : entry.kind === "lent"
-      ? "browse · Agents can use this tab. Click to take it back"
-      : isPinned(tabId, "handoff")
-        ? "browse · An agent is waiting for you. Click to continue"
+    : isPinned(tabId, "handoff")
+      ? "browse · An agent is waiting for you. Click to continue"
+      : entry.kind === "lent"
+        ? "browse · Agents can use this tab. Click to take it back"
         : "browse · Agent tab. Click to take it over";
   browser.browserAction.setTitle({ tabId, title }).catch(() => {});
 }
@@ -235,6 +235,11 @@ browser.tabs.onActivated.addListener(async ({ tabId, windowId }) => {
   }
 });
 
+// Firefox resets per-tab badge and title when a tab navigates; put ours back.
+browser.tabs.onUpdated.addListener((tabId, changed) => {
+  if (registry.has(tabId) && (changed.url || changed.status)) badge(tabId);
+});
+
 browser.tabs.onRemoved.addListener((tabId, info) => {
   registry.delete(tabId);
   pins.delete(tabId);
@@ -300,6 +305,8 @@ export async function describeTab(tabId) {
     openerTabId: entry.openerTabId ?? null,
     idleSeconds: entry.lastUsed ? Math.round((Date.now() - entry.lastUsed) / 1000) : null,
     pinnedBy: [...(pins.get(tabId) || [])],
+    badge: (await browser.browserAction.getBadgeText({ tabId }).catch(() => "")) || undefined,
+    toolbarTitle: await browser.browserAction.getTitle({ tabId }).catch(() => undefined),
   };
 }
 

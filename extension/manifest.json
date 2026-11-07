@@ -3,23 +3,32 @@
   "name": "browse for Firefox",
   "short_name": "browse-fx",
   "version": "0.1.0",
-  "description": "Lets your AI agents use your real Firefox: background tabs, snapshots, clicks, screenshots, network capture, recordings and hand-offs to you.",
+  "description": "Let AI agents (MCP clients) use your real Firefox: background tabs, page snapshots, clicks and forms, screenshots, network capture, recordings, and hand-offs to you.",
   "browser_specific_settings": {
     "gecko": {
       "id": "{908e931a-d7fd-434d-b466-8cd8ef9f1a7d}",
       "strict_min_version": "140.0",
       "data_collection_permissions": {
-        "required": ["none"]
+        "required": [
+          "none"
+        ]
       }
     }
   },
   "icons": {
-    "48": "icons/icon.svg",
-    "96": "icons/icon.svg"
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "64": "icons/icon-64.png",
+    "96": "icons/icon-96.png",
+    "128": "icons/icon-128.png"
   },
   "browser_action": {
-    "default_title": "browse · Click to let agents use this tab",
-    "default_icon": "icons/icon.svg",
+    "default_title": "browse \u00b7 Click to let agents use this tab",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "64": "icons/icon-64.png"
+    },
     "default_area": "navbar"
   },
   "options_ui": {
@@ -42,5 +51,6 @@
     "webNavigation",
     "webRequest",
     "webRequestBlocking"
-  ]
+  ],
+  "homepage_url": "https://github.com/sankalpmukim/browse-firefox"
 }

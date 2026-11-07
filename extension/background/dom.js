@@ -127,6 +127,9 @@ export function waitForNavigation(tabId, { waitUntil = "load", timeoutMs = 30_00
 }
 
 export async function navigate(tabId, action, { url, waitUntil, timeoutMs } = {}) {
+  // A brand-new tab may still be loading its initial about:blank, which would swallow our navigation.
+  const current = await browser.tabs.get(tabId);
+  if (action === "goto" && current.status === "loading" && current.url === "about:blank") await waitForLoadState(tabId, { timeoutMs: 3000 }).catch(() => {});
   const wait = waitForNavigation(tabId, { waitUntil, timeoutMs, ignoreBlank: action === "goto" && url !== "about:blank" });
   try {
     if (action === "goto") await browser.tabs.update(tabId, { url });

@@ -1,5 +1,6 @@
 <!doctype html><title>Auth fetch</title><div id="r">pending</div>
 <script>
-fetch('/api/me?access_token=SECRET123&page=2', { headers: { Authorization: 'Bearer SECRETBEARER' } })
+const t = ['SECRET', '123'].join(''), b = ['SECRET', 'BEARER'].join('');
+fetch('/api/me?access_token=' + t + '&page=2', { headers: { Authorization: 'Bearer ' + b } })
   .then(r => r.json()).then(j => { document.getElementById('r').textContent = 'user=' + j.user; });
 </script>
