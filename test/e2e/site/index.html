@@ -1,0 +1,32 @@
+<!doctype html><html><head><title>Fixture Shop</title>
+<style>body{font-family:sans-serif;margin:20px} .fake-btn{cursor:pointer;padding:4px;background:#eee;display:inline-block} #cb{opacity:0;position:absolute;width:1px;height:1px} .overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none} .tall{height:2000px;background:linear-gradient(#fff,#ccf)}</style></head>
+<body>
+<header><nav aria-label="Main"><a href="/">Home</a> <a href="/page2.html">Page two</a> <a href="/page2.html" target="_blank" id="blank">Open in new tab</a></nav></header>
+<main>
+<h1>Welcome to the fixture</h1>
+<p>Some intro text with <b>bold</b> words.</p>
+<form id="f" action="/page2.html" method="get">
+  <label for="email">Email</label> <input id="email" name="email" type="email" placeholder="you@example.com">
+  <label>Password <input id="pw" name="pw" type="password"></label>
+  <select id="size" name="size"><option value="s">Small</option><option value="m">Medium</option><option value="l">Large</option></select>
+  <label><input id="cb" type="checkbox" name="agree"> I agree</label>
+  <textarea id="notes" name="notes"></textarea>
+  <button type="submit">Sign in</button>
+</form>
+<div class="fake-btn" onclick="document.getElementById('out').textContent='clicked fake ' + event.isTrusted">Fake button</div>
+<div id="out"></div>
+<my-widget></my-widget>
+<ul><li>Apple</li><li>Banana</li><li>Cherry <button>Buy cherry</button></li></ul>
+<button id="dup">Save</button><button id="dup2" style="display:none">Save</button>
+<input id="react" placeholder="react-like">
+<div id="reactout"></div>
+<iframe src="/frame.html" title="inner frame" width="300" height="80"></iframe>
+<div class="tall"></div>
+<p id="bottom">Bottom of page</p>
+</main>
+<script>
+customElements.define('my-widget', class extends HTMLElement { constructor(){ super(); const s=this.attachShadow({mode:'closed'}); s.innerHTML='<button id="shadowbtn">Shadow action</button><span>inside shadow</span>'; s.querySelector('button').onclick=()=>{document.getElementById('out').textContent='shadow clicked'} } });
+document.getElementById('react').addEventListener('input', e => { document.getElementById('reactout').textContent = 'react saw: ' + e.target.value; });
+console.log('fixture loaded', {a:1});
+</script>
+</body></html>

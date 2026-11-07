@@ -1,0 +1,1 @@
+<!doctype html><title>Page Two</title><h1>Second page</h1><p id="q"></p><script>document.getElementById('q').textContent = location.search; fetch('/api.json?token=abc123').then(r=>r.json()).then(j=>document.title='Page Two ('+j.ok+')')</script>

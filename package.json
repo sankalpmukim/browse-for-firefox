@@ -1,0 +1,25 @@
+{
+  "name": "browse-firefox",
+  "version": "0.1.0",
+  "description": "Let your AI agents use your real Firefox: an MCP server, a native-messaging relay and a Firefox extension. A Firefox take on anomalyco/browse.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "browse-firefox": "src/cli.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "install-local": "node src/cli.mjs install",
+    "build": "node src/cli.mjs build",
+    "sign": "node src/cli.mjs sign",
+    "lint": "npx --yes web-ext@8 lint --source-dir extension",
+    "dev": "npx --yes web-ext@8 run --source-dir extension --firefox=/Applications/Firefox.app/Contents/MacOS/firefox",
+    "test": "node --test test/unit.test.mjs",
+    "e2e": "sh test/e2e/run.sh"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2"
+  }
+}

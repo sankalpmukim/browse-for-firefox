@@ -1,0 +1,5 @@
+<!doctype html><title>Auth fetch</title><div id="r">pending</div>
+<script>
+fetch('/api/me?access_token=SECRET123&page=2', { headers: { Authorization: 'Bearer SECRETBEARER' } })
+  .then(r => r.json()).then(j => { document.getElementById('r').textContent = 'user=' + j.user; });
+</script>

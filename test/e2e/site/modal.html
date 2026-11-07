@@ -1,0 +1,4 @@
+<!doctype html><title>Modal</title>
+<button id="under">Underneath</button><div id="res"></div>
+<div id="overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.5)"><div role="dialog" aria-label="Cookie consent" style="background:#fff;margin:100px auto;width:300px;padding:20px">We use cookies <button onclick="document.getElementById('overlay').remove()">Accept</button></div></div>
+<script>document.getElementById('under').onclick = () => document.getElementById('res').textContent = 'under clicked';</script>

@@ -1,0 +1,2 @@
+<!doctype html><title>Delayed</title><div id="c"></div>
+<script>setTimeout(() => { const b = document.createElement('button'); b.textContent = 'Late button'; b.onclick = () => b.textContent = 'Late clicked'; document.getElementById('c').append(b); }, 1500);</script>

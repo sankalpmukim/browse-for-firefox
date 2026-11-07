@@ -1,0 +1,8 @@
+<!doctype html><title>SPA home</title>
+<nav><a href="/spa/settings" data-route>Settings</a> <a href="/spa/profile" data-route>Profile</a></nav>
+<main id="view"><h1>Home view</h1></main>
+<script>
+const render = () => { const p = location.pathname; document.getElementById('view').innerHTML = p.endsWith('settings') ? '<h1>Settings view</h1><label>Theme <select id="theme"><option>Light</option><option>Dark</option></select></label>' : p.endsWith('profile') ? '<h1>Profile view</h1>' : '<h1>Home view</h1>'; document.title = 'SPA ' + (p.split('/').pop() || 'home'); };
+document.addEventListener('click', e => { const a = e.target.closest('a[data-route]'); if (!a) return; e.preventDefault(); history.pushState({}, '', a.getAttribute('href')); render(); });
+addEventListener('popstate', render); render();
+</script>

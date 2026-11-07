@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>browse for Firefox</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="../icons/icon.svg" alt="" width="40" height="40" />
+        <div>
+          <h1>browse for Firefox</h1>
+          <p class="sub">Let your AI agents use this Firefox: your tabs, your logins, in the background.</p>
+        </div>
+      </header>
+
+      <section class="card" id="connection">
+        <h2>Connection</h2>
+        <div class="status-row">
+          <span class="dot" id="dot"></span>
+          <div>
+            <div id="status-title" class="status-title">Checking…</div>
+            <div id="status-detail" class="muted"></div>
+          </div>
+          <button id="reconnect" class="secondary">Reconnect</button>
+        </div>
+        <div id="setup" class="setup" hidden>
+          <p>The local relay isn't installed yet. In a terminal, from the <code>browse-firefox</code> folder, run:</p>
+          <pre><code>node src/cli.mjs install</code></pre>
+          <p class="muted">It registers the native-messaging host with Firefox and adds the <code>browse-firefox</code> MCP server to your agents. Then click Reconnect.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Settings</h2>
+        <form id="settings">
+          <label class="field">
+            <span>Where agents open their tabs</span>
+            <select name="windowMode">
+              <option value="current">In your window, in the background</option>
+              <option value="separate">In a separate window of their own</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Grouping</span>
+            <select name="grouping">
+              <option value="shared">One "Agents" tab group per window</option>
+              <option value="session">One group per agent session</option>
+              <option value="none">Don't group</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Close tabs agents haven't touched for</span>
+            <select name="idleMinutes">
+              <option value="10">10 minutes</option>
+              <option value="30">30 minutes</option>
+              <option value="60">60 minutes</option>
+              <option value="0">Never</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Agent cursor</span>
+            <select name="cursor">
+              <option value="false">Off</option>
+              <option value="true">Show where agents click (pages can detect it)</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Human-like input</span>
+            <select name="humanInput">
+              <option value="true">On: paced typing and scrolling</option>
+              <option value="false">Off: full speed</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Hand-off notifications</span>
+            <select name="handoffNotifications">
+              <option value="true">Notify me when an agent needs me</option>
+              <option value="false">Only show the card in the page</option>
+            </select>
+          </label>
+          <p id="saved" class="muted saved" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Tabs agents can use</h2>
+        <p class="muted">Click the browse toolbar button on any tab to lend it to agents (badge <b class="badge on">ON</b>); click again to take it back. <b class="badge run">RUN</b> means an agent is working, <b class="badge wait">WAIT</b> means it needs you.</p>
+        <ul id="tabs" class="tabs"></ul>
+      </section>
+
+      <footer class="muted">
+        <span id="versions"></span>
+      </footer>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>

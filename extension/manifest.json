@@ -1,0 +1,46 @@
+{
+  "manifest_version": 2,
+  "name": "browse for Firefox",
+  "short_name": "browse-fx",
+  "version": "0.1.0",
+  "description": "Lets your AI agents use your real Firefox: background tabs, snapshots, clicks, screenshots, network capture, recordings and hand-offs to you.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{908e931a-d7fd-434d-b466-8cd8ef9f1a7d}",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
+  "icons": {
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg"
+  },
+  "browser_action": {
+    "default_title": "browse · Click to let agents use this tab",
+    "default_icon": "icons/icon.svg",
+    "default_area": "navbar"
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "page": "background/background.html",
+    "persistent": true
+  },
+  "permissions": [
+    "<all_urls>",
+    "nativeMessaging",
+    "tabs",
+    "tabGroups",
+    "sessions",
+    "storage",
+    "alarms",
+    "notifications",
+    "webNavigation",
+    "webRequest",
+    "webRequestBlocking"
+  ]
+}
