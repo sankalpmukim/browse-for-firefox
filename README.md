@@ -3,6 +3,9 @@
 **Let your AI agents use your real Firefox**: your tabs, your logins, your extensions, in background tabs grouped
 out of your way.
 
+**[Install the extension from addons.mozilla.org](https://addons.mozilla.org/firefox/addon/browse-for-firefox/)** ·
+the extension is one half of the pair — the small local relay in this repo is the other ([Quick start](#quick-start)).
+
 browse for Firefox is an MCP server plus a Firefox extension. It works with [opencode](https://opencode.ai), Claude
 Code, Codex, Cursor and any other MCP client. Agents can:
 
@@ -35,6 +38,7 @@ Code, Codex, Cursor and any other MCP client. Agents can:
 - [Troubleshooting](#troubleshooting)
 - [Development](#development)
 - [Project layout](#project-layout)
+- [Releasing](#releasing)
 - [Roadmap](#roadmap)
 - [License and credits](#license-and-credits)
 
@@ -449,6 +453,19 @@ test/
   e2e/harness.mjs          fixture server, isolated Firefox launcher, SDK client helper
   e2e/site/                fixture pages
 ```
+
+## Releasing
+
+Publishing a version to addons.mozilla.org is automated. Per release:
+
+1. Bump `version` in `extension/manifest.json` and `package.json` (they must match), and add
+   `store/release-notes/<version>.md`.
+2. Push a tag `v<version>` and publish a GitHub release. The
+   [submit workflow](.github/workflows/submit.yml) checks the tag against the version, builds the AMO metadata
+   from `store/`, and signs through `web-ext` with the `AMO_JWT_ISSUER` / `AMO_JWT_SECRET` repo secrets.
+
+AMO rejects a version it already has, so every release needs a bump. To submit without a release (e.g. listing
+copy changes), run the workflow manually from the Actions tab; it publishes whatever `main` carries.
 
 ## Roadmap
 

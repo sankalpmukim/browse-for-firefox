@@ -1,0 +1,43 @@
+name: "Publish to addons.mozilla.org"
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Build the AMO metadata only; do not submit"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  sign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check release tag matches the extension version
+        if: github.event_name == 'release'
+        run: |
+          pkg="v$(node -p 'require("./package.json").version')"
+          tag="${{ github.event.release.tag_name }}"
+          if [ "$pkg" != "$tag" ]; then
+            echo "::error::Release tag $tag does not match package.json version $pkg"
+            exit 1
+          fi
+      - name: Build AMO metadata and submit
+        env:
+          AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
+          AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+        run: node store/publish.mjs ${{ (inputs.dry_run == true) && '--dry-run' || '' }}
+      - name: Keep the submitted metadata
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: amo-submission
+          path: dist/
