@@ -47,8 +47,8 @@ Code, Codex, Cursor and any other MCP client. Agents can:
 ### 1. Install the relay and register your agents
 
 ```sh
-git clone <this repo> browse-firefox
-cd browse-firefox
+git clone https://github.com/sankalpmukim/opencode-browse-firefox
+cd opencode-browse-firefox
 node src/cli.mjs install
 ```
 
@@ -70,22 +70,12 @@ client, add this entry:
 
 ### 2. Add the extension to Firefox
 
-Once browse for Firefox is listed on addons.mozilla.org, install it from there. Until then:
+Install **[browse for Firefox from addons.mozilla.org](https://addons.mozilla.org/firefox/addon/browse-for-firefox/)**.
+The extension's settings page opens on first run and shows **Connected to the local relay** once step 1 is done.
 
-- **Try it now.** Open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on…**, and choose
-  `extension/manifest.json`. Firefox removes temporary add-ons when it restarts, so you load it again after each
-  restart.
-- **Keep it installed.** Sign it for yourself as a private, unlisted add-on. This is free, automated, and publishes
-  nothing. Get API credentials at <https://addons.mozilla.org/developers/addon/api/key/>, then run:
-  ```sh
-  AMO_JWT_ISSUER=user:… AMO_JWT_SECRET=… node src/cli.mjs sign
-  open -a Firefox dist/*.xpi        # then click Add
-  ```
-- **Firefox Developer Edition or Nightly.** Set `xpinstall.signatures.required` to `false` in `about:config`, then
-  open `dist/*.xpi`.
-
-The extension's settings page opens on first run and shows **Connected to the local relay** once everything is in
-place.
+To run the extension straight from your checkout instead (for development), open
+`about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on…** and choose `extension/manifest.json`.
+Firefox removes temporary add-ons when it restarts.
 
 ### 3. Check, then try it
 
@@ -462,7 +452,6 @@ test/
 
 ## Roadmap
 
-- Publish on addons.mozilla.org, so installing no longer needs signing or `about:debugging`.
 - An npm package, so `npx browse-firefox install` works without a git checkout.
 - A flight recorder: keep the last minute of video, and save it when something breaks.
 - Windows support (the native host is registered through the registry).
