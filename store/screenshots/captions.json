@@ -1,0 +1,6 @@
+{
+  "screenshot-agents-group.png": "Agents open tabs in a collapsed group, out of your way — your own tabs stay untouched.",
+  "screenshot-settings.png": "The settings page shows the relay connection and safety controls at a glance.",
+  "screenshot-handoff.png": "When only you can continue — a login, 2FA, a CAPTCHA — the agent hands the tab back and waits for you.",
+  "screenshot-forms.png": "Agents read pages as accessibility snapshots, click, and fill forms in your real Firefox."
+}
