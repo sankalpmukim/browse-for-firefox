@@ -467,6 +467,11 @@ Publishing a version to addons.mozilla.org is automated. Per release:
 AMO rejects a version it already has, so every release needs a bump. To submit without a release (e.g. listing
 copy changes), run the workflow manually from the Actions tab; it publishes whatever `main` carries.
 
+Listing copy, the icon and screenshots live in `store/` (`listing.md`, `icon-512.png`, `screenshots/` with
+`captions.json`) and are pushed to AMO with `node store/publish.mjs --sync-listing` (needs the same AMO keys).
+AMO throttles edit endpoints aggressively — the sync is change-checked and resumable, so if it is throttled,
+wait out the window it reports and run it again.
+
 ## Roadmap
 
 - An npm package, so `npx browse-firefox install` works without a git checkout.
