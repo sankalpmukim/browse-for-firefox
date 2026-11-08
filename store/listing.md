@@ -9,7 +9,7 @@ Agents open background tabs inside a collapsed "Agents" tab group, out of your w
 
 When only you can continue (a login, a 2FA prompt, a CAPTCHA, a payment), the agent hands the tab to you. It carries on after you click Continue.
 
-**Requires a free companion app.** This extension only talks to a small local relay that you install from https://github.com/sankalpmukim/opencode-browse-firefox (one command: node src/cli.mjs install). The relay connects your MCP agents to Firefox through native messaging. Without the companion app, the extension does nothing.
+**Requires a free companion app.** This extension only talks to a small local relay that you install from https://github.com/sankalpmukim/browse-for-firefox (one command: node src/cli.mjs install). The relay connects your MCP agents to Firefox through native messaging. Without the companion app, the extension does nothing.
 
 **Highlights**
 • Lend any tab to an agent with the toolbar button (badge ON). Click again to take it back.

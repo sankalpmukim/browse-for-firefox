@@ -47,8 +47,8 @@ Code, Codex, Cursor and any other MCP client. Agents can:
 ### 1. Install the relay and register your agents
 
 ```sh
-git clone https://github.com/sankalpmukim/opencode-browse-firefox
-cd opencode-browse-firefox
+git clone https://github.com/sankalpmukim/browse-for-firefox
+cd browse-for-firefox
 node src/cli.mjs install
 ```
 

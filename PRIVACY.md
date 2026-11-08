@@ -14,4 +14,4 @@ browse for Firefox does not collect, store or send any personal data to the deve
   asks for, and may send it to the AI model provider you configured. That is governed by your agent's and provider's
   own policies, not by this extension.
 
-Questions: open an issue at https://github.com/sankalpmukim/opencode-browse-firefox/issues.
+Questions: open an issue at https://github.com/sankalpmukim/browse-for-firefox/issues.
