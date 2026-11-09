@@ -3,8 +3,10 @@
 **Let your AI agents use your real Firefox**: your tabs, your logins, your extensions, in background tabs grouped
 out of your way.
 
-**[Install the extension from addons.mozilla.org](https://addons.mozilla.org/firefox/addon/browse-for-firefox/)** ·
+**[Install "Agent Browse" from addons.mozilla.org](https://addons.mozilla.org/firefox/addon/agent-browse/)** ·
 the extension is one half of the pair — the small local relay in this repo is the other ([Quick start](#quick-start)).
+Listed on AMO as **Agent Browse** (Mozilla's naming policy doesn't allow "Firefox" in add-on names); everything
+else about the project keeps the browse-firefox name.
 
 browse for Firefox is an MCP server plus a Firefox extension. It works with [opencode](https://opencode.ai), Claude
 Code, Codex, Cursor and any other MCP client. Agents can:
@@ -74,7 +76,7 @@ client, add this entry:
 
 ### 2. Add the extension to Firefox
 
-Install **[browse for Firefox from addons.mozilla.org](https://addons.mozilla.org/firefox/addon/browse-for-firefox/)**.
+Install **[Agent Browse from addons.mozilla.org](https://addons.mozilla.org/firefox/addon/agent-browse/)**.
 The extension's settings page opens on first run and shows **Connected to the local relay** once step 1 is done.
 
 To run the extension straight from your checkout instead (for development), open

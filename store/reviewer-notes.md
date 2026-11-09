@@ -1,7 +1,7 @@
 Hello, and thanks for reviewing.
 
 WHAT IT IS
-browse for Firefox connects a user's local AI agents (MCP clients such as Claude Code, opencode or Codex) to their own Firefox. It is open source (MIT): https://github.com/sankalpmukim/browse-for-firefox. The extension is plain, unminified JavaScript with no build step and no bundler, so the uploaded files are the source.
+Agent Browse (listed name; project name "browse for Firefox") connects a user's local AI agents (MCP clients such as Claude Code, opencode or Codex) to their own Firefox. It is open source (MIT): https://github.com/sankalpmukim/browse-for-firefox. The extension is plain, unminified JavaScript with no build step and no bundler, so the uploaded files are the source.
 
 COMPANION APP (nativeMessaging)
 The extension needs a local native-messaging host, "browse_firefox", from the same repository (src/host.mjs, Node.js). Its manifest's allowed_extensions lists only this add-on's ID. The host relays requests from local MCP clients over a Unix socket in a 0700 folder. There is no network listener and no remote server. Without the host installed, the extension stays idle and its options page shows setup instructions.

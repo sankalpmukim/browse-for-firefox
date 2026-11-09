@@ -23,7 +23,7 @@ const releaseNotes = (() => {
 
 const metadata = {
   name: { "en-US": manifest.name },
-  slug: "browse-for-firefox",
+  slug: "agent-browse",
   summary: { "en-US": "Let your AI agents (Claude Code, opencode, Codex, any MCP client) use your real Firefox: tabs, logins, forms, screenshots, network capture, and hand-offs to you." },
   description: { "en-US": read("store/listing.md") },
   categories: { firefox: ["web-development", "tabs"] },

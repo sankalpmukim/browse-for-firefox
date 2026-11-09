@@ -1,6 +1,6 @@
 Your AI coding agent, inside the Firefox you actually use.
 
-browse for Firefox connects local AI agents (opencode, Claude Code, Codex, Cursor — anything that speaks MCP) to your real browser: your tabs, your logins, your extensions. No throwaway automation profile — the agent works where you already are.
+Agent Browse (the store name for "browse for Firefox"; same project, same repo) connects local AI agents (opencode, Claude Code, Codex, Cursor — anything that speaks MCP) to your real browser: your tabs, your logins, your extensions. No throwaway automation profile — the agent works where you already are.
 
 **What agents can do**
 • open pages in a collapsed "Agents" tab group, out of your way

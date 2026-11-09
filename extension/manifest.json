@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "browse for Firefox",
+  "name": "Agent Browse",
   "short_name": "browse-fx",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Let AI agents (MCP clients) use your real Firefox: background tabs, page snapshots, clicks and forms, screenshots, network capture, recordings, and hand-offs to you.",
   "browser_specific_settings": {
     "gecko": {

@@ -1,6 +1,6 @@
 {
   "name": "browse-firefox",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Let your AI agents use your real Firefox: an MCP server, a native-messaging relay and a Firefox extension. A Firefox take on anomalyco/browse.",
   "type": "module",
   "license": "MIT",
